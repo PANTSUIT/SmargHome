@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.smarthome">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SmartHome">
+        <service
+            android:name=".MyMqttService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <meta-data
+            android:name="com.baidu.speech.APP_ID"
+            android:value="23784292" />
+        <meta-data
+            android:name="com.baidu.speech.API_KEY"
+            android:value="QzHzZGR4XMRhm1E3a4KuN31P" />
+        <meta-data
+            android:name="com.baidu.speech.SECRET_KEY"
+            android:value="STl364WoaG5yoRib4le9e4Daeqj0nmHE" />
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
