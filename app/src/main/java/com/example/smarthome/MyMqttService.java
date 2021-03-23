@@ -31,7 +31,7 @@ public class MyMqttService extends Service {
 
     private static MqttAndroidClient mqttAndroidClient;
     private MqttConnectOptions mqttConnectOptions;
-    public String HOST = "Tcp://111.230.206.15:8083";
+    public String HOST = "TCP://111.230.206.15:8083";
     public String USERNAME = "panda";
     public char PASSWORD[] = {'p','a','n','d','a'};
     public static String PUBLIC_TOPIC = "tourist_enter";
@@ -39,6 +39,7 @@ public class MyMqttService extends Service {
 
     @RequiresApi(api = 26)
     public String CLIENTID = "APP";
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startID)
@@ -63,6 +64,7 @@ public class MyMqttService extends Service {
      * 开启服务
      */
     public static void startService(Context mContext) {
+        Log.i("MQTT startService", "startService: ");
         mContext.startService(new Intent(mContext, MyMqttService.class));
     }
 
