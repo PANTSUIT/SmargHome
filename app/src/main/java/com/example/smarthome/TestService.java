@@ -24,7 +24,7 @@ import java.net.ConnectException;
 public class TestService extends Service {
     private static final String TAG = "TestService";
 
-    private static MqttAndroidClient mqttAndroidClient;
+    public static MqttAndroidClient mqttAndroidClient;
     private MqttConnectOptions mqttConnectOptions;
     public String HOST = "tcp://111.230.206.15:1883";
     public String USERNAME = "panda";
@@ -53,7 +53,6 @@ public class TestService extends Service {
 
         @Override
         public void deliveryComplete(IMqttDeliveryToken token) {
-
         }
     };
 
@@ -185,6 +184,35 @@ public class TestService extends Service {
         }
         connectToServer();
     }
+
+
+    public void publish(String payload, int qos) {
+        try {
+            if(mqttAndroidClient.isConnected() == false)
+            {
+                connectToServer();
+            }
+            MqttMessage message = new MqttMessage();
+            message.setPayload(payload.getBytes());
+            message.setQos(qos);
+            mqttAndroidClient.publish(PUBLIC_TOPIC, message, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.i(TAG, "publish succeed!");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.i(TAG, "publish failed!");
+                }
+            });
+        } catch (MqttException ex){
+            Log.e(TAG, ex.toString());
+            ex.printStackTrace();
+        }
+    }
+
+
 
 
 }
