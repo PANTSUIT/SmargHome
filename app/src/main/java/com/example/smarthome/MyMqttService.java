@@ -31,7 +31,7 @@ public class MyMqttService extends Service {
 
     private static MqttAndroidClient mqttAndroidClient;
     private MqttConnectOptions mqttConnectOptions;
-    public String HOST = "TCP://111.230.206.15:8083";
+    public String HOST = "TCP://111.230.206.15:1883";
     public String USERNAME = "panda";
     public char PASSWORD[] = {'p','a','n','d','a'};
     public static String PUBLIC_TOPIC = "tourist_enter";

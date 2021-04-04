@@ -2,11 +2,16 @@ package com.example.smarthome;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -22,21 +27,16 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 public class StartActivity extends AppCompatActivity {
 
     private static final String TAG = "StartActivity";
-    private Button button_reco;
-    private Button button_Start;
-    private Button button_Stop;
+    private Button button_voicectrl;
+    private Button button_commonctrl;
 
-
-    //private final String TAG = "AiotMqtt";
-    /* 设备三元组信息 */
-    final private String PRODUCTKEY = "a11xsrWmW14";
-    final private String DEVICENAME = "paho_android";
-    final private String DEVICESECRET = "tLMT9QWD36U2SArglGqcHCDK9rK9nOrA";
+    TestService mqttService;
+    ServiceConnection serviceConnection;
 
     /* 自动Topic, 用于上报消息 */
-    final private String PUB_TOPIC = "/" + PRODUCTKEY + "/" + DEVICENAME + "/user/update";
+    final private String PUB_TOPIC = "/user/update";
     /* 自动Topic, 用于接受消息 */
-    final private String SUB_TOPIC = "/" + PRODUCTKEY + "/" + DEVICENAME + "/user/get";
+    final private String SUB_TOPIC = "/user/get";
 
     /* 阿里云Mqtt服务器域名 */
     final String host = "tcp://111.230.206.15:1883";
@@ -46,56 +46,72 @@ public class StartActivity extends AppCompatActivity {
 
     MqttAndroidClient mqttAndroidClient;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
         Log.i(TAG, "onCreate: ");
-        button_reco = findViewById(R.id.button_reconized);
-        button_Start = findViewById(R.id.button_start);
-        button_Stop = findViewById(R.id.button_stop);
+        button_voicectrl = findViewById(R.id.button_reconized);
+        button_commonctrl = findViewById(R.id.button_common);
 
         final Intent intent = new Intent(StartActivity.this , TestService.class);
 
-        button_reco.setOnClickListener(new View.OnClickListener() {
+        button_voicectrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "button_reco clicked");
+                Log.i(TAG, "button_voicdctrl clicked");
                 Intent intent = new Intent(StartActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
 
-        button_Start.setOnClickListener(new View.OnClickListener() {
+        button_commonctrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startService(intent);
-                //TestService::publish(me, 0);
+                Log.i(TAG, "button_commonctrl clicked");
+                Intent intent = new Intent(StartActivity.this, CommonControlActivity.class);
+                startActivity(intent);
             }
         });
 
-        button_Stop.setOnClickListener(new View.OnClickListener() {
+        Intent serviceIntent = new Intent(this, MyMqttService.class);
+        serviceConnection = new ServiceConnection() {
             @Override
-            public void onClick(View v) {
-                stopService(intent);
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                TestService.MyBinder binder = (TestService.MyBinder) service;
+                mqttService = binder.getService();
             }
-        });
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mqttService = null;
+            }
+        };
+
+        Intent intentOne = new Intent(this, TestService.class);
+        startService(intentOne);
+        // mqttinit();
+    }
 
 
+    @Override
+    protected void onDestroy() {
+        Intent intentOne = new Intent(this, TestService.class);
+        stopService(intentOne);
+        super.onDestroy();
+    }
 
+    public void mqttinit(){
         // MQTT
-
-
         /* 获取Mqtt建连信息clientId, username, password */
-        AiotMqttOption aiotMqttOption = new AiotMqttOption().getMqttOption(PRODUCTKEY, DEVICENAME, DEVICESECRET);
-        if (aiotMqttOption == null) {
+        IotMqttOption iotMqttOption = new IotMqttOption();
+        if (iotMqttOption == null) {
             Log.e(TAG, "device info error");
         } else {
-            clientId = aiotMqttOption.getClientId();
-            userName = aiotMqttOption.getUsername();
-            passWord = aiotMqttOption.getPassword();
+            clientId = iotMqttOption.getClientId();
+            userName = iotMqttOption.getUsername();
+            passWord = iotMqttOption.getPassword();
         }
 
         /* 创建MqttConnectOptions对象并配置username和password */
@@ -103,56 +119,44 @@ public class StartActivity extends AppCompatActivity {
         mqttConnectOptions.setUserName(userName);
         mqttConnectOptions.setPassword(passWord.toCharArray());
 
-
         /* 创建MqttAndroidClient对象, 并设置回调接口 */
         mqttAndroidClient = new MqttAndroidClient(getApplicationContext(), host, clientId);
         mqttAndroidClient.setCallback(new MqttCallback() {
+            //连接异常断开后，调用
             @Override
             public void connectionLost(Throwable cause) {
                 Log.i(TAG, "connection lost");
             }
-
+            //消息到达后，调用 接收
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.i(TAG, "topic: " + topic + ", msg: " + new String(message.getPayload()));
+                Toast.makeText(getApplicationContext(), "messageArrived:" + topic+ new String(message.getPayload()), Toast.LENGTH_SHORT).show();
             }
-
+            //消息发送成功后，调用
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
                 Log.i(TAG, "msg delivered");
             }
         });
-
         /* Mqtt建连 */
         try {
             mqttAndroidClient.connect(mqttConnectOptions,null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.i(TAG, "connect succeed");
-
-                    subscribeTopic(SUB_TOPIC);
+                    Toast.makeText(getApplicationContext(), "Connect succeed!", Toast.LENGTH_SHORT).show();
                 }
-
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.i(TAG, "connect failed");
+                    Toast.makeText(getApplicationContext(), "Connect failed!", Toast.LENGTH_SHORT).show();
                 }
             });
-
         } catch (MqttException e) {
             e.printStackTrace();
         }
-
-        /* 通过按键发布消息 */
-        Button pubButton = findViewById(R.id.button_publish);
-        pubButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                publishMessage("hello IoT");
-            }
-        });
     }
-
 
     /**
      * 订阅特定的主题
@@ -181,7 +185,7 @@ public class StartActivity extends AppCompatActivity {
      * 向默认的主题/user/update发布消息
      * @param payload 消息载荷
      */
-    public void publishMessage(String payload) {
+    public void publishMessage(String topic, String payload) {
         try {
             if (mqttAndroidClient.isConnected() == false) {
                 mqttAndroidClient.connect();
@@ -190,7 +194,7 @@ public class StartActivity extends AppCompatActivity {
             MqttMessage message = new MqttMessage();
             message.setPayload(payload.getBytes());
             message.setQos(0);
-            mqttAndroidClient.publish(PUB_TOPIC, message,null, new IMqttActionListener() {
+            mqttAndroidClient.publish(topic, message,null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.i(TAG, "publish succeed!");
@@ -210,7 +214,7 @@ public class StartActivity extends AppCompatActivity {
     /**
      * MQTT建连选项类，输入设备三元组productKey, deviceName和deviceSecret, 生成Mqtt建连参数clientId，username和password.
      */
-    class AiotMqttOption {
+    class IotMqttOption {
         private String username = "";
         private String password = "";
         private String clientId = "";
@@ -221,34 +225,21 @@ public class StartActivity extends AppCompatActivity {
 
         /**
          * 获取Mqtt建连选项对象
-         * @param productKey 产品秘钥
-         * @param deviceName 设备名称
-         * @param deviceSecret 设备机密
          * @return AiotMqttOption对象或者NULL
          */
-        public AiotMqttOption getMqttOption(String productKey, String deviceName, String deviceSecret) {
-            if (productKey == null || deviceName == null || deviceSecret == null) {
-                return null;
-            }
-
+        public IotMqttOption()
+        {
             try {
                 String timestamp = Long.toString(System.currentTimeMillis());
-
                 // clientId
                 this.clientId = "APP";
-
                 // userName
                 this.username = "panda";
-
                 // password
                 this.password = "panda";
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
             }
-
-            return this;
         }
     }
-
 }

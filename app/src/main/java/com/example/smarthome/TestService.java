@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -94,7 +95,6 @@ public class TestService extends Service {
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
             Toast.makeText(getApplicationContext(), "Connect Success", Toast.LENGTH_SHORT).show();
-
             try{
                  mqttAndroidClient.subscribe("/test/test", 0);
             }
@@ -212,7 +212,11 @@ public class TestService extends Service {
         }
     }
 
-
-
+    public class MyBinder extends Binder {
+        public TestService getService()
+        {
+            return TestService.this;
+        }
+    }
 
 }
