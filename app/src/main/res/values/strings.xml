@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">SmartHome</string>
+    <string name="topic_bedroom_fan">/bedroom/fan</string>
+    <string name="topic_bedroom_lamp">/bedroom/lamp</string>
+    <string name="topic_bedroom_curtain">/bedroom/curtain</string>
+    <string name="topic_bedroom_humidity">/bedroom/humidity</string>
+    <string name="topic_bedroom_temperature">/bedroom/temperature</string>
+
+    <string name="topic_livingroom_fan">/livingroom/fan</string>
+    <string name="topic_livingroom_lamp">/livingroom/lamp</string>
+    <string name="topic_livingroom_curtain">/livingroom/curtain</string>
+    <string name="topic_livingroom_humidity">/livingroom/humidity</string>
+    <string name="topic_livingroom_temperature">/livingroom/temperature</string>
+
+    <string name="topic_kitchen_lamp">/kitchen/lamp</string>
+    <string name="topic_kitchen_humidity">/kitchen/humidity</string>
+    <string name="topic_kitchen_temperature">/kitchen/temperature</string>
+
+    <string name="topic_toilet_lamp">/toilet/lamp</string>
+
 </resources>
