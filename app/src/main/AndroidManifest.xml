@@ -14,10 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartHome">
+        <activity android:name=".VoiceControlActivity"></activity>
+
         <service
             android:name=".XMqttService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity android:name=".CommonControlActivity" />
 
@@ -43,14 +45,6 @@
         <meta-data
             android:name="com.baidu.speech.SECRET_KEY"
             android:value="STl364WoaG5yoRib4le9e4Daeqj0nmHE" />
-
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>

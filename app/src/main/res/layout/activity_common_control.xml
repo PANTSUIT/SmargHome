@@ -52,11 +52,11 @@
                         android:text="风扇" />
 
                     <Switch
-                        android:id="@+id/switch_bedroom_airconditioner"
+                        android:id="@+id/switch_bedroom_curtain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
-                        android:text="空调" />
+                        android:text="窗帘" />
 
                 </LinearLayout>
                 <LinearLayout
@@ -73,7 +73,7 @@
                     android:layout_marginHorizontal="20dp"
                     />
                 <TextView
-                    android:id="@+id/text_bedroom_humidiry"
+                    android:id="@+id/text_bedroom_humidity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Humidity: 78%"
@@ -113,15 +113,15 @@
                         android:id="@+id/switch_livingroom_fan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="10dp"
                         android:text="风扇" />
 
                     <Switch
                         android:id="@+id/switch_livingroom_curtain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:text="空调" />
+                        android:layout_marginHorizontal="10dp"
+                        android:text="窗帘" />
 
                 </LinearLayout>
                 <LinearLayout
@@ -135,14 +135,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text ="Temperature: 27.1℃"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="10dp"
                         />
                     <TextView
                         android:id="@+id/text_livingroom_humidiry"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Humidity: 78%"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="10dp"
                         />
                 </LinearLayout>
             </LinearLayout>
@@ -168,24 +168,25 @@
                     android:orientation="horizontal"
                     >
                     <Switch
-                    android:id="@+id/switch_kitchen_lamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:text="灯" />
+                        android:id="@+id/switch_kitchen_lamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp"
+                        android:text="灯"
+                        />
                     <TextView
                         android:id="@+id/text_kitchen_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text ="Temperature: 27.1℃"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="10dp"
                         />
                     <TextView
                         android:id="@+id/text_kitchen_humidiry"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Humidity: 78%"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="10dp"
                         />
                 </LinearLayout>
             </LinearLayout>
@@ -214,7 +215,6 @@
                         android:id="@+id/switch_toilet_lamp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
                         android:text="灯" />
                 </LinearLayout>
 

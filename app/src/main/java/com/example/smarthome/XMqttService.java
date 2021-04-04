@@ -18,6 +18,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONObject;
 
 public class XMqttService extends Service {
 
@@ -32,6 +33,11 @@ public class XMqttService extends Service {
     public static String RESPONSE_TOPIC = "message_arrived";
     public String clientId = "APP";
 
+    private double bedroom_humidity = 0, bedroom_temperature = 0;
+    private double livingroom_humidity = 0, livingroom_temperature = 0;
+    private double kitchen_humidity = 0, kitchen_temperature = 0;
+
+
     private MqttCallback mqttCallback = new MqttCallback() {
         //连接异常断开后，调用
         @Override
@@ -43,6 +49,38 @@ public class XMqttService extends Service {
         public void messageArrived(String topic, MqttMessage message) throws Exception {
             Log.i(TAG, "topic: " + topic + ", msg: " + new String(message.getPayload()));
             Toast.makeText(getApplicationContext(), "messageArrived:" + topic+ new String(message.getPayload()), Toast.LENGTH_SHORT).show();
+
+            JSONObject jsonObject = new JSONObject(message.toString());
+            if(topic.equals(getString(R.string.topic_bedroom_humidity)))
+            {
+                bedroom_humidity = jsonObject.getDouble("humidity");
+                Toast.makeText(getApplicationContext(), String.format("messageArrived: " + bedroom_humidity), Toast.LENGTH_SHORT).show();
+            }
+            else if(topic.equals(getString(R.string.topic_bedroom_temperature)))
+            {
+                bedroom_temperature = jsonObject.getDouble("temperature");
+                Toast.makeText(getApplicationContext(), String.format("messageArrived: " + bedroom_temperature), Toast.LENGTH_SHORT).show();
+            }
+            else if(topic.equals(getString(R.string.topic_livingroom_humidity)))
+            {
+                livingroom_humidity = jsonObject.getDouble("temperature");
+                Toast.makeText(getApplicationContext(), String.format("messageArrived: " + livingroom_humidity), Toast.LENGTH_SHORT).show();
+            }
+            else if(topic.equals(getString(R.string.topic_livingroom_temperature)))
+            {
+                livingroom_temperature = jsonObject.getDouble("temperature");
+                Toast.makeText(getApplicationContext(), String.format("messageArrived: " + livingroom_temperature), Toast.LENGTH_SHORT).show();
+            }
+            else if(topic.equals(getString(R.string.topic_kitchen_humidity)))
+            {
+                kitchen_humidity = jsonObject.getDouble("temperature");
+                Toast.makeText(getApplicationContext(), String.format("messageArrived: " + kitchen_humidity), Toast.LENGTH_SHORT).show();
+            }
+            else if(topic.equals(getString(R.string.topic_kitchen_temperature)))
+            {
+                kitchen_temperature = jsonObject.getDouble("temperature");
+                Toast.makeText(getApplicationContext(), String.format("messageArrived: " + kitchen_temperature), Toast.LENGTH_SHORT).show();
+            }
         }
         //消息发送成功后，调用
         @Override
@@ -240,4 +278,31 @@ public class XMqttService extends Service {
         }
     }
 
+    public static MqttAndroidClient getMqttAndroidClient() {
+        return mqttAndroidClient;
+    }
+
+    public double getBedroom_humidity() {
+        return bedroom_humidity;
+    }
+
+    public double getBedroom_temperature() {
+        return bedroom_temperature;
+    }
+
+    public double getKitchen_humidity() {
+        return kitchen_humidity;
+    }
+
+    public double getKitchen_temperature() {
+        return kitchen_temperature;
+    }
+
+    public double getLivingroom_humidity() {
+        return livingroom_humidity;
+    }
+
+    public double getLivingroom_temperature() {
+        return livingroom_temperature;
+    }
 }

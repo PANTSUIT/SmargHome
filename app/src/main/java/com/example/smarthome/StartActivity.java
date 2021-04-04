@@ -70,7 +70,7 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "button_voicdctrl clicked");
-                Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                Intent intent = new Intent(StartActivity.this, VoiceControlActivity.class);
                 startActivity(intent);
             }
         });
